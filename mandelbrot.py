@@ -1,11 +1,13 @@
 from manim import *
-from math import log, ceil
+from math import log, ceil, sqrt
 import time
 from numba import jit, njit
 from numba.experimental import jitclass
 from numba.typed import List
 
-ratio = 16/9
+ratio_x = 16
+ratio_y = 9
+ratio = ratio_x / ratio_y
 rows = config.frame_size[1]
 cols = ceil(rows * ratio)
 height = config.frame_height
@@ -18,6 +20,7 @@ class Mandelbrot(Scene):
         global rows
         global height
         global width
+        global ratio
 
         start_time = time.time()
 
@@ -26,17 +29,27 @@ class Mandelbrot(Scene):
             include_underline=False,
             font_size=40,
         ).move_to([-5,3,0])
+
+        grid = Axes(
+            x_range=[-1 * ratio, 1 * ratio, 0.5],
+            y_range=[-1, 1, 0.5],
+            x_length=8 * ratio,
+            y_length=8,
+            axis_config={
+                "include_numbers": True
+            },
+            tips=False,
+        )
             
-        doube_ratio = ratio * 2
         zoom = 1
         center_x = 0
         center_y = 0
-        delta_x = (doube_ratio / 3)
         delta_y = 1
-        re_min = ( -center_x - delta_x * 2 ) / zoom
-        re_max = ( -center_x + delta_x ) / zoom
-        im_min = (-center_y - delta_y ) / zoom
-        im_max = ( -center_y + delta_y ) / zoom
+        delta_x = 1
+        re_min = (( center_x ) - delta_x / zoom) * ratio
+        re_max = (( center_x ) + delta_x / zoom) * ratio
+        im_min = (( center_y ) - delta_y / zoom)
+        im_max = (( center_y ) + delta_y / zoom)
 
         print("re_min: ", re_min)
         print("re_max: ", re_max)
@@ -48,7 +61,7 @@ class Mandelbrot(Scene):
         image = ImageMobject(pixels_to_render)
         image.height = height
         image.width  = width
-        self.add(image, title)
+        self.add(image, title, grid)
 
         end_time = time.time()
         elapsed_time = end_time - start_time
@@ -74,7 +87,11 @@ def iterate_cols(re_min, re_max, im_min, im_max, y):
     for x in range(cols):
         c_re = re_min + (re_max-re_min)*x/cols
         iter = julia(c_re, c_im, c_re, c_im, max_betrag_2, max_iter)
-        row.append(color_picker(iter, max_iter))
+        if (sqrt(c_re**2 + c_im**2) < 0.02 or sqrt((c_re+1)**2 + c_im**2) < 0.02):
+            color = [255, 255, 255, 255]
+        else:
+            color = color_picker(iter, max_iter)
+        row.append(color)
     return row
 
 @njit #(parallel=True)

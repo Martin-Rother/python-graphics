@@ -23,7 +23,7 @@ center_y = -0.6065922085831237
 max_iter = 20000 """
 min_zoom = 1
 max_zoom = 10000
-seconds = 10
+seconds = 2
 center_x = -0.34853774148008254
 center_y = -0.6065922085831237
 
@@ -34,7 +34,7 @@ class Mandelbrot(Scene):
         
         i = 0
         max_iter = 1000
-        for zoom in np.logspace(start=log(min_zoom),stop=log(max_zoom, 10),num=seconds * config.frame_rate, endpoint = False):
+        for zoom in np.logspace(start=log(min_zoom),stop=log(max_zoom, 10),num=int(seconds * config.frame_rate), endpoint=False):
             max_iter = max_iter * 20 ** ((1/config.frame_rate) / seconds)
             start_loop_time = time.time() 
             inv_zoom = 1 / zoom

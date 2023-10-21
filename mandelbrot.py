@@ -3,11 +3,9 @@ from math import log
 import time
 from numba import njit
 
-ratio_x = 16
-ratio_y = 9
-ratio = ratio_x / ratio_y
 cols = config.frame_size[0]
 rows = config.frame_size[1]
+ratio = cols / rows
 
 """ z = 10000000
 center_x = -1.308109
@@ -23,7 +21,8 @@ center_y = -0.6065922085831237
 max_iter = 20000 """
 min_zoom = 1
 max_zoom = 10000
-seconds = 2
+seconds = 1
+frame_count = int(seconds * config.frame_rate)
 center_x = -0.34853774148008254
 center_y = -0.6065922085831237
 
@@ -34,7 +33,7 @@ class Mandelbrot(Scene):
         
         i = 0
         max_iter = 1000
-        for zoom in np.logspace(start=log(min_zoom),stop=log(max_zoom, 10),num=int(seconds * config.frame_rate), endpoint=False):
+        for zoom in np.logspace(start=log(min_zoom),stop=log(max_zoom, 10),num=frame_count, endpoint=False):
             max_iter = max_iter * 20 ** ((1/config.frame_rate) / seconds)
             start_loop_time = time.time() 
             inv_zoom = 1 / zoom
@@ -54,9 +53,9 @@ class Mandelbrot(Scene):
             now = time.time()
             loop_string = ('loop time: ' + str(now - start_loop_time)).ljust(31)
             total_string = ('total time: ' + str(now - start_time)).ljust(31)
-            frame_count = ('frame: ' + str(i)).ljust(11)
+            frame_string = ('frame: ' + str(i) + '/' + str(frame_count)).ljust(15)
             max_iter_string = ('max_iter: ' + str(max_iter)).ljust(31)
-            print(frame_count + zoom_string + loop_string + total_string + max_iter_string)
+            print(frame_string + zoom_string + loop_string + total_string + max_iter_string)
             i += 1
 
         """ ax = Axes(

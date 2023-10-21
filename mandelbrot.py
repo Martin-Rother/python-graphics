@@ -1,8 +1,7 @@
 from manim import *
-from math import log, ceil, sqrt
+from math import log
 import time
-from numba import jit, njit
-from numba.typed import List
+from numba import njit
 
 ratio_x = 16
 ratio_y = 9

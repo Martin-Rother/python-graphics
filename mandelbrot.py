@@ -7,9 +7,9 @@ cols = config.frame_size[0]
 rows = config.frame_size[1]
 ratio = cols / rows
 
-min_zoom = int(config.output_file)
-max_zoom = int(config.output_file)
-seconds = 10
+min_zoom = 100
+max_zoom = 100
+seconds = 5
 #frame_count = int(seconds * config.frame_rate)
 frame_count = 1
 center_x = -0.34842634784126914
@@ -33,6 +33,7 @@ class Mandelbrot(Scene):
             im_max = center_y + inv_zoom
             pixels_to_render = np.uint8(iterate_rows(re_min, re_max, im_min, im_max, max_iter, zoom ** 1/zoom))
             image = ImageMobject(pixels_to_render)
+            image.set_resampling_algorithm(RESAMPLING_ALGORITHMS["lanczos"])
             image.height = config.frame_height
             image.width  = config.frame_width
             self.add(image)

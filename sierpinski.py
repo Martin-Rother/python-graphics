@@ -6,15 +6,16 @@ class Sierpinski(Scene):
     centers = {}
     color = RED_C
     font_size = 50
-    max_depth = 5
+    max_depth = 6
+    upside_down = -1 # +1 or -1
 
     def construct(self):
-        text = Text("Sierpinski-Triangle", font_size=32, weight=ULTRALIGHT).move_to([4,3,0])
+        text = Text("Sierpinski-Triangle", font_size=32, weight=ULTRALIGHT).move_to([4, self.upside_down * 3, 0])
         self.add(text)
 
-        p1 = [0, 4 * 3**0.5 - 3.5, 0]
-        p2 = [-4, -3.5, 0]
-        p3 = [4, -3.5, 0]
+        p1 = [0, self.upside_down * (4 * 3**0.5 - 3.5), 0]
+        p2 = [-4, -self.upside_down * 3.5, 0]
+        p3 = [4, -self.upside_down * 3.5, 0]
         triangle = Polygon(p1, p2, p3, color=self.color, fill_opacity=1, stroke_width=0.5)
         self.play(Create(triangle))
         
